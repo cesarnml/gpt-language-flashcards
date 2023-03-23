@@ -1,26 +1,30 @@
 <script lang="ts">
 	import { signIn, signOut } from '@auth/sveltekit/client'
 	import { page } from '$app/stores'
+	import { invalidateAll } from '$app/navigation'
+	import type { PageData } from './$types'
 
-	export let data
-	const { decks } = data
+	export let data: PageData
+
+	$: decks = data.decks
 
 	let title = ''
 
-	const onSubmit = () => {
-		fetch('/api/deck', {
+	const onSubmit = async () => {
+		await fetch('/api/deck', {
 			method: 'POST',
 			body: JSON.stringify({
 				title,
-				ownerId: 1,
 			}),
 		})
+
+		await invalidateAll()
 	}
 </script>
 
 <div class="space-y-10">
 	<h1 class="font-bold text-xl">Welcome to SvelteKit</h1>
-	<div>DECKS: {JSON.stringify(decks, null, 2)}</div>
+	<pre>DECKS: {JSON.stringify(decks, null, 2)}</pre>
 	<p>
 		{#if $page.data.session}
 			{#if $page.data.session.user?.image}
@@ -38,7 +42,7 @@
 	</p>
 	<div class="space-y-3 border inline-block">
 		<h2>Create A NEW DECK</h2>
-		<form class="inline-flex flex-col items-start gap-5" on:submit={onSubmit}>
+		<form class="inline-flex flex-col items-start gap-5" on:submit|preventDefault={onSubmit}>
 			<label class="space-x-4">
 				<span>Title</span>
 				<input type="text" bind:value={title} name="title" />
