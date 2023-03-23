@@ -10,4 +10,30 @@ export const handle = SvelteKitAuth({
 	providers: [GitHub({ clientId: GITHUB_CLIENT_ID, clientSecret: GITHUB_CLIENT_SECRET })],
 	adapter: PrismaAdapter(prisma),
 	secret: AUTH_SECRET,
+	callbacks: {
+		async signIn({ user, account, profile }) {
+			console.log('SIGNIN')
+
+			console.log('profile:', profile)
+			console.log('account:', account)
+			console.log('user:', user)
+			await prisma.profile.upsert({
+				where: {
+					id: user.id,
+				},
+				update: {},
+				create: {
+					userId: user.id,
+					name: user.name,
+				},
+			})
+			return true
+		},
+		async session({ session, user }) {
+			console.log('CALLBACKING')
+			console.log('user:', user)
+			console.log('session:', session)
+			return session
+		},
+	},
 }) satisfies Handle
