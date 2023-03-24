@@ -10,10 +10,10 @@
 	let back_content = ''
 
 	const onSubmit = async () => {
-		await fetch('/api/cards', {
+		await fetch('/api/openai', {
 			method: 'POST',
 			body: JSON.stringify({
-				front_content,
+				text: front_content,
 				back_content,
 				deckId: $page.params.deckId,
 			}),
