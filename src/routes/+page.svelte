@@ -11,7 +11,7 @@
 	let title = ''
 
 	const onSubmit = async () => {
-		await fetch('/api/deck', {
+		await fetch('/api/decks', {
 			method: 'POST',
 			body: JSON.stringify({
 				title,
@@ -22,9 +22,23 @@
 	}
 </script>
 
-<div class="space-y-10">
+<div class="space-y-6">
 	<h1 class="font-bold text-xl">Welcome to SvelteKit</h1>
-	<pre>DECKS: {JSON.stringify(decks, null, 2)}</pre>
+	<div class="space-y-3 border inline-block">
+		<h2 class="hero">Create A NEW DECK</h2>
+		<form class="inline-flex flex-col items-start gap-5" on:submit|preventDefault={onSubmit}>
+			<label class="space-x-4">
+				<span>Title</span>
+				<input type="text" bind:value={title} name="title" />
+			</label>
+			<button class="btn btn-primary self-end" type="submit">Create</button>
+		</form>
+	</div>
+	{#each decks as deck}
+		<div>
+			<a class="link link-info" href={`/decks/${deck.id}`}>{deck.title}</a>
+		</div>
+	{/each}
 	<p>
 		{#if $page.data.session}
 			{#if $page.data.session.user?.image}
@@ -40,14 +54,4 @@
 			<button class="btn btn-primary" on:click={() => signIn('github')}>Sign In with GitHub</button>
 		{/if}
 	</p>
-	<div class="space-y-3 border inline-block">
-		<h2>Create A NEW DECK</h2>
-		<form class="inline-flex flex-col items-start gap-5" on:submit|preventDefault={onSubmit}>
-			<label class="space-x-4">
-				<span>Title</span>
-				<input type="text" bind:value={title} name="title" />
-			</label>
-			<button class="btn btn-primary self-end" type="submit">Create</button>
-		</form>
-	</div>
 </div>
