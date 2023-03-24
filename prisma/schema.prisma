@@ -25,11 +25,12 @@ model Deck {
 }
 
 model Card {
-  id            String @id @default(uuid())
-  front_content String
-  back_content  String
-  deckId        String
-  deck          Deck   @relation(fields: [deckId], references: [id])
+  id              String @id @default(uuid())
+  front_content   String
+  back_content    String
+  deckId          String
+  deck            Deck   @relation(fields: [deckId], references: [id])
+  transcriptionId String
 }
 
 model Account {

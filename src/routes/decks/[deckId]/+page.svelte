@@ -2,6 +2,8 @@
 	import { invalidateAll } from '$app/navigation'
 	import { page } from '$app/stores'
 	import type { PageData } from './$types'
+	import Card from '$lib/components/Card.svelte'
+
 	export let data: PageData
 	$: deck = data.deck
 	$: cards = data.lazy.cards
@@ -53,10 +55,7 @@
 		{:then cardsArray}
 			<!-- promise was fulfilled -->
 			{#each cardsArray as card}
-				<div class="card card-normal card-body border">
-					<div>FRONT:{card.front_content}</div>
-					<div>BACK: {card.back_content}</div>
-				</div>
+				<Card {card} />
 			{/each}
 		{/await}
 	</div>

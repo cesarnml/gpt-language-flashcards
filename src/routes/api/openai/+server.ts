@@ -2,6 +2,7 @@ import { openai } from '$lib/config/openai'
 import { text } from '@sveltejs/kit'
 import type { ChatCompletionRequestMessage } from 'openai'
 import type { RequestHandler } from './$types'
+import { PLAY_SECRET_KEY, PLAY_USER_ID } from '$env/static/private'
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	const translate = await request.json()
@@ -13,7 +14,7 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 
 	const messages: ChatCompletionRequestMessage[] = [
 		{ role: 'system', content: prompt },
-		{ role: 'user', content: translate.text },
+		{ role: 'user', content: `Translate the following text to Spanish: ${translate.text}` },
 	]
 
 	try {
@@ -23,15 +24,32 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
 		})
 		const response = completion.data.choices[0].message?.content.split(';') as string[]
 
+		console.log('completion:', completion.data.choices[0].message?.content)
+
+		const voice = await fetch('https://play.ht/api/v1/convert', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: PLAY_SECRET_KEY,
+				'X-User-ID': PLAY_USER_ID,
+			},
+			body: JSON.stringify({
+				voice: 'Miguel',
+				content: [`${response[1]}`],
+			}),
+		})
+		const result = await voice.json()
+		console.log('voice:', result)
+
 		await fetch('/api/cards', {
 			method: 'POST',
 			body: JSON.stringify({
 				front_content: response[0],
 				back_content: `${response[1]}`,
 				deckId: translate.deckId,
+				transcriptionId: result.transcriptionId,
 			}),
 		})
-		console.log('completion:', completion.data.choices[0].message?.content)
 	} catch (error) {
 		console.log('error:', error)
 	}
