@@ -1,8 +1,7 @@
 import { openai } from '$lib/config/openai'
+import { text } from '@sveltejs/kit'
+import type { ChatCompletionRequestMessage } from 'openai'
 import type { RequestHandler } from './$types'
-import { json, text } from '@sveltejs/kit'
-import { prisma } from '$lib/config/prismaClient'
-import type { CreateChatCompletionRequest, ChatCompletionRequestMessage } from 'openai'
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
 	const translate = await request.json()
