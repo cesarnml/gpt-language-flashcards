@@ -4,6 +4,7 @@ import { prisma } from '$lib/config/prismaClient'
 
 export const POST: RequestHandler = async ({ request }) => {
 	const newCard = await request.json()
+	console.log('newCard:', newCard)
 
 	const created = await prisma.card.create({
 		data: newCard,
